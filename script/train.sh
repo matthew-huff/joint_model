@@ -1,0 +1,18 @@
+python model_train/train_para.py \
+--model_name_or_path roberta-base \
+--tokenizer_name roberta-base \
+--task_name para \
+--data_dir dataset/para_training/ \
+--max_seq_length 512 \
+--output_dir path \
+--do_train \
+--do_eval \
+--overwrite_output_dir \
+--per_device_train_batch_size 4 \
+--gradient_accumulation_steps 2 \
+--per_device_eval_batch_size 32 \
+--learning_rate 1e-5 \
+--num_train_epochs 5 \
+--save_steps 10000 \
+--logging_steps 10000 \
+--use_sent_loss \
