@@ -19,7 +19,7 @@ pip install -r requirements.txt
 ```
 
 ## Data
-You can download the preprocess data of HotpotQA with the following links: [data](). The prepocessed data has concatenated the question and passage as input and injected special token `</s>` before each sentence in a passage. 
+You can download the preprocess data of HotpotQA with the following links: [data](https://drive.google.com/drive/folders/1rUth38_A6kgOqzCJeonIAZ7tIJPv9HRr?usp=sharing). The prepocessed data has concatenated the question and passage as input and injected special token `</s>` before each sentence in a passage. 
 Download the data into `dataset/` folder. We provide two toy examples under the `dataset/toy.jsonl`.
 
 #### Data pre-processing
