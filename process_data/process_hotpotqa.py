@@ -5,6 +5,9 @@ import numpy as np
 import string 
 import math
 
+import sys
+sys.path.insert(0, '..')
+
 from common.utils_plus import *
 
 
@@ -36,18 +39,25 @@ def hotpot(read_path, save_path,mode="train"):
         for para in item['context']:
             title = para[0]
             sents_label = [-1]*(len(para[1]))
+            ans_label = -1
             para_label = -1
+
             if  title in supporting_title:
                 para_label = 1
                 for idx in supporting_title[title]:
                     if  idx < len(para[1]):
                         sents_label[idx] = 1
-            
+                for sent in para[1]:
+                    if answer in sent:
+                        ans_label = 1
+                
             datum = {
                 'para':"</s> ".join([question]+para[1][:9]),
                 'para_label':para_label,
-                'sents_label':sents_label[:9]
+                'sents_label':sents_label[:9],
+                'ans_label':ans_label
             }
+
             if title in supporting_title:
                 posi_para.append(datum)
             else:
@@ -65,3 +75,6 @@ def normalize(str1):
     str2 = str1.translate(translator)
     str2 = str2.lower().replace(" ","")
     return str2
+
+
+#hotpot('../dataset/raw_test.json', '../dataset/raw_test_out.json')
