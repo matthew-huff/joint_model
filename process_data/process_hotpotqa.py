@@ -10,7 +10,9 @@ sys.path.insert(0, '..')
 
 from common.utils_plus import *
 
-
+from transformers import RobertaTokenizerFast
+from tqdm import tqdm as tqdm
+import extract_answer_label
 # this function process the raw hotpotQA data to the desired input format. one example of the input format is given below. 
 '''
 {"para": "The arena where the Lewiston Maineiacs played their home games can seat how many people?</s> The Androscoggin Bank Colisée (formerly Centra
@@ -18,6 +20,7 @@ l Maine Civic Center and Lewiston Colisee) is a 4,000 capacity (3,677 seated) mu
 965 it was the location of the World Heavyweight Title fight during which one of the most famous sports photographs of the century was taken of Muham
 med Ali standing over Sonny Liston.", "para_label": 1, "sents_label": [1, -1]}
 '''
+tokenizer = RobertaTokenizerFast.from_pretrained('roberta-base')
 
 def hotpot(read_path, save_path,mode="train"):
     posi_para = []
@@ -51,12 +54,36 @@ def hotpot(read_path, save_path,mode="train"):
                     if answer in sent:
                         ans_label = 1
                 
+            datum_1 = {
+
+            }
+
+
             datum = {
-                'para':"</s> ".join([question]+para[1][:9]),
+                'question': question,
+                'para':"</s> ".join(para[1][:9]),
                 'para_label':para_label,
                 'sents_label':sents_label[:9],
-                'ans_label':ans_label
+                'target_text':answer,
+                #'ans_label':ans_label
             }
+
+            try:
+                d = extract_answer_label.prepare_train_features(datum, tokenizer)
+            except:
+                continue
+
+            try:
+
+                datum['ans_label'] = [d['start_positions'][0], d['end_positions'][0]]
+                answers = d['input_ids'][0][d['start_positions'][0]:d['end_positions'][0]+1]
+                answers_string = tokenizer.decode(answers)
+
+            except IndexError:
+                datum['ans_label'] = [0,0]
+            
+            
+            
 
             if title in supporting_title:
                 posi_para.append(datum)
@@ -66,7 +93,7 @@ def hotpot(read_path, save_path,mode="train"):
     if mode=="train":
         neg_para = random.sample(neg_para, len(posi_para))
     all_samples = posi_para+neg_para
-    print(len(all_samples))
+    #print(len(all_samples))
     jsonline_plus.dump(all_samples, save_path)
 
 translator = str.maketrans(string.punctuation, ' '*len(string.punctuation))
@@ -76,5 +103,6 @@ def normalize(str1):
     str2 = str2.lower().replace(" ","")
     return str2
 
-
-#hotpot('../dataset/raw_test.json', '../dataset/raw_test_out.json')
+if __name__ == "__main__":
+    
+    hotpot('../dataset/hotpot_train_v1.1.json', '../dataset/out.json')

@@ -156,7 +156,8 @@ class JointQAModel(BertPreTrainedModel):
                     loss2 = loss_fct(logits_sents.view(-1), sents_labels.view(-1))
                     loss += loss2
                     
-                    
+            #add loss function
+            
             else:
                 loss_fct = CrossEntropyLoss()
                 loss = loss_fct(logits.view(-1, self.num_labels), label.view(-1))
