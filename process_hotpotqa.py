@@ -12,7 +12,7 @@ from common.utils_plus import *
 
 from transformers import RobertaTokenizerFast
 from tqdm import tqdm as tqdm
-import extract_answer_label
+import process_data.extract_answer_label as extract_answer_label
 # this function process the raw hotpotQA data to the desired input format. one example of the input format is given below. 
 '''
 {"para": "The arena where the Lewiston Maineiacs played their home games can seat how many people?</s> The Androscoggin Bank Colisée (formerly Centra
@@ -53,15 +53,11 @@ def hotpot(read_path, save_path,mode="train"):
                 for sent in para[1]:
                     if answer in sent:
                         ans_label = 1
-                
-            datum_1 = {
-
-            }
-
+          
 
             datum = {
-                'question': question,
-                'para':"</s> ".join(para[1][:9]),
+                #'question': question,
+                'para':"</s> ".join([question] + para[1][:9]),
                 'para_label':para_label,
                 'sents_label':sents_label[:9],
                 'target_text':answer,
@@ -72,15 +68,19 @@ def hotpot(read_path, save_path,mode="train"):
                 d = extract_answer_label.prepare_train_features(datum, tokenizer)
             except:
                 continue
+            
 
             try:
 
-                datum['ans_label'] = [d['start_positions'][0], d['end_positions'][0]]
-                answers = d['input_ids'][0][d['start_positions'][0]:d['end_positions'][0]+1]
-                answers_string = tokenizer.decode(answers)
+                #datum['ans_label'] = [d['start_positions'][0], d['end_positions'][0]]
+                datum['start_position'] = d['start_positions'][0]
+                datum['end_position'] = d['end_positions'][0]
+                #answers = d['input_ids'][0][d['start_positions'][0]:d['end_positions'][0]+1]
+                #answers_string = tokenizer.decode(answers)
 
             except IndexError:
-                datum['ans_label'] = [0,0]
+                datum['start_position'] = 0
+                datum['end_position'] = 0
             
             
             
@@ -105,4 +105,4 @@ def normalize(str1):
 
 if __name__ == "__main__":
     
-    hotpot('../dataset/hotpot_train_v1.1.json', '../dataset/out.json')
+    hotpot('dataset/hotpot_train_v1.1.json', 'dataset/out1.json')

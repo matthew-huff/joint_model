@@ -1,6 +1,8 @@
 
 *.ipynb_checkpoints
 dataset/*.json
+dataset/*.jsonl
+dataset/para_training/*.jsonl
 dataset/para_training/train.jsonl
 dataset/para_training/dev.jsonl
 .DS_Store

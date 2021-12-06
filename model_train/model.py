@@ -36,7 +36,7 @@ from transformers import (
 import torch.nn as nn
 
 from transformers import AutoModel, AutoConfig
-from transformers import PreTrainedModel, BertPreTrainedModel
+from transformers import PreTrainedModel,
 from transformers.modeling_outputs import SequenceClassifierOutput
 # from transformers import _BaseAutoModelClass
 from torch.nn import MSELoss, CrossEntropyLoss, TripletMarginLoss, TripletMarginWithDistanceLoss
